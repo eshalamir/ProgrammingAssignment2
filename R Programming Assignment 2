@@ -1,0 +1,38 @@
+ makeCacheMatrix <- function(x = matrix()) {
++   inv <- NULL  
++   set <- function(y) {
++     x <<- y         
++     inv <<- NULL    
++   }
++   get <- function() x  
++   setinverse <- function(inverse) inv <<- inverse  
++   getinverse <- function() inv  
++   list(set = set, get = get, setinverse = setinverse, getinverse = getinverse)
++ }
+
+cacheSolve <- function(x, ...) {
+  inv <- x$getinverse()  
+  if (!is.null(inv)) {
+    message("getting cached data")
+    return(inv)  
+  }
+  data <- x$get()  
+  inv <- solve(data, ...)  
+  x$setinverse(inv)  
+  inv  
+}
+
+mat <- matrix(c(1, 2, 3, 4), nrow = 2, ncol = 2)
+cache_mat <- makeCacheMatrix(mat)
+cacheSolve(cache_mat)
+   [,1] [,2]
+[1,]   -2  1.5
+[2,]    1 -0.5
+
+ mat <- matrix(c(4, 3, 2, 1), 2, 2)
+ cache_mat <- makeCacheMatrix(mat)
+ inv <- cacheSolve(cache_mat)
+ mat %*% inv  
+     [,1] [,2]
+[1,]    1    0
+[2,]    0    1
